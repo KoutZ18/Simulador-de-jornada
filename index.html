@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Jornada de Trabalho</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    
+</head>
+<body>
+  
+  <!-- Botão que redireciona -->
+  <button class="btn-red" onclick="window.location.href='https://www.google.com'">Google</button>
+
+    <div class="container">
+        
+           
+        
+        <div class="header">
+            <h1>Simulador de Jornada de Trabalho</h1>
+            
+        </div>
+        
+        <div class="simulation-controls">
+            <div class="control-group">
+                <h3>Configurações Base</h3>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="mes">Mês de Simulação:</label>
+                        <select id="mes">
+                            <option value="0">Janeiro</option>
+                            <option value="1">Fevereiro</option>
+                            <option value="2">Março</option>
+                            <option value="3">Abril</option>
+                            <option value="4">Maio</option>
+                            <option value="5">Junho</option>
+                            <option value="6">Julho</option>
+                            <option value="7">Agosto</option>
+                            <option value="8">Setembro</option>
+                            <option value="9">Outubro</option>
+                            <option value="10">Novembro</option>
+                            <option value="11">Dezembro</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="ano">Ano:</label>
+                        <input type="number" id="ano" value="2025" min="2020" max="2030">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="diaEscolhido">Dia da Semana de Folga:</label>
+                        <select id="diaEscolhido">
+                            <option value="-1">Nenhum</option>
+                            <option value="6" selected>Sábado</option>
+                            <option value="0">Domingo</option>
+                            <option value="1">Segunda-feira</option>
+                            <option value="2">Terça-feira</option>
+                            <option value="3">Quarta-feira</option>
+                            <option value="4">Quinta-feira</option>
+                            <option value="5">Sexta-feira</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="semanaFolga">Semana de Folga:</label>
+                        <select id="semanaFolga">
+                            <option value="0">Nenhuma</option>
+                            <option value="1">1ª semana</option>
+                            <option value="2">2ª semana</option>
+                            <option value="3">3ª semana</option>
+                            <option value="4">4ª semana</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="intervalo">Intervalo (min):</label>
+                        <input type="number" id="intervalo" value="60" min="30" max="120">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Horários Segunda a Sexta</h3>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="entradaSeg">Entrada:</label>
+                        <input type="time" id="entradaSeg" value="08:00">
+                    </div>
+                    <div class="input-group">
+                        <label for="saidaSeg">Saída:</label>
+                        <input type="time" id="saidaSeg" value="17:00">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="turnoNoturno">
+                            <input type="checkbox" id="turnoNoturno" onchange="toggleTurnoNoturno()">
+                            Terceiro Turno (trabalho noturno)
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Horários Sábado</h3>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="entradaSab">Entrada:</label>
+                        <input type="time" id="entradaSab" value="08:00">
+                    </div>
+                    <div class="input-group">
+                        <label for="saidaSab">Saída:</label>
+                        <input type="time" id="saidaSab" value="12:00">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Meta de Produtividade</h3>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="producaoHora">Produção por Hora:</label>
+                        <input type="number" id="producaoHora" value="0" min="0" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label for="unidadeMedida">Unidade de Medida:</label>
+                        <input type="text" id="unidadeMedida" placeholder="Ex: peças, kg, unidades">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+            <button class="btn" onclick="simularJornada()">Simular Jornada</button>
+            <button class="btn btn-secondary" onclick="gerarRelatorio()">Gerar Relatório</button>
+            <button class="btn" onclick="mostrarCalendario()">Ajuste Manual</button>
+            <button class="btn btn-secondary" onclick="gerenciarFeriados()">Gerenciar Feriados</button>
+            <button class="btn" onclick="exportarCSV()">Exportar CSV</button>
+        </div>
+        
+        <div class="productivity-section" id="produtividadeSection" style="display: none;">
+            <h3>Análise de Produtividade</h3>
+            <div class="productivity-results">
+                <div class="productivity-card">
+                    <h4>Produção Diária Média</h4>
+                    <div class="productivity-value" id="producaoDiaria">0</div>
+                    <small id="unidadeDiaria"></small>
+                </div>
+                <div class="productivity-card">
+                    <h4>Produção Semanal</h4>
+                    <div class="productivity-value" id="producaoSemanal">0</div>
+                    <small id="unidadeSemanal"></small>
+                </div>
+                <div class="productivity-card">
+                    <h4>Produção Mensal Total</h4>
+                    <div class="productivity-value" id="producaoMensal">0</div>
+                    <small id="unidadeMensal"></small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="feriados-section" id="feriadosSection" style="display: none;">
+            <h3>Gerenciar Feriados</h3>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="date" id="dataFeriado" style="padding: 10px; border: 2px solid #e9ecef; border-radius: 8px;">
+                <input type="text" id="nomeFeriado" placeholder="Nome do feriado" style="padding: 10px; border: 2px solid #e9ecef; border-radius: 8px; flex: 1;">
+                <button class="btn" onclick="adicionarFeriado()">Adicionar</button>
+            </div>
+            <div class="feriados-list" id="feriadosList"></div>
+        </div>
+        
+        <div class="calendar-section" id="calendarioSection" style="display: none;">
+            <h3>Calendário - Clique nos dias para ajustar horários</h3>
+            <div class="calendar-grid" id="calendarioGrid"></div>
+        </div>
+        
+        <div class="manual-schedule" id="ajusteManual">
+            <h3>Ajuste Manual de Horários</h3>
+            <div id="diaInfo"></div>
+            <div class="schedule-grid" id="scheduleGrid"></div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn" onclick="salvarAjuste()">Salvar Ajuste</button>
+                <button class="btn btn-secondary" onclick="cancelarAjuste()">Cancelar</button>
+            </div>
+        </div>
+        
+        <div class="chart-container" id="graficoContainer" style="display: none;">
+            <h3>Gráfico de Tendência - Horas Trabalhadas e Produtividade</h3>
+            <canvas id="graficoTendencia"></canvas>
+            <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 10px; display: none;" id="resumoProducao">
+                <h4 style="margin: 0 0 10px 0; color: #495057;">Resumo de Produção Mensal</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div>
+                        <strong>Total Produzido:</strong> <span id="totalProduzidoGrafico">0</span>
+                    </div>
+                    <div>
+                        <strong>Média Diária:</strong> <span id="mediaProduzidoGrafico">0</span>
+                    </div>
+                    <div>
+                        <strong>Dias Produtivos:</strong> <span id="diasProdutivosGrafico">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="results" id="resultados" style="display: none;">
+            <h3>Resultados da Simulação</h3>
+            
+            <div class="metrics">
+                <div class="metric-card">
+                    <h4>Total de Horas</h4>
+                    <div class="metric-value" id="totalHoras">0:00</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Limite Legal</h4>
+                    <div class="metric-value">220:00</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Saldo</h4>
+                    <div class="metric-value" id="saldo">0:00</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Dias Trabalhados</h4>
+                    <div class="metric-value" id="diasTrabalhados">0</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Horas/Dia Médio</h4>
+                    <div class="metric-value" id="mediaHoras">0:00</div>
+                </div>
+                <div class="metric-card">
+                    <h4>% do Limite</h4>
+                    <div class="metric-value" id="percentualLimite">0%</div>
+                </div>
+            </div>
+            
+            <div id="alertaResultado"></div>
+            
+            <table id="simulacaoTable">
+                <thead>
+                    <tr>
+                        <th>Dia</th>
+                        <th>Data</th>
+                        <th>Dia da Semana</th>
+                        <th>Entrada</th>
+                        <th>Saída</th>
+                        <th>Intervalo</th>
+                        <th>Horas Trabalhadas</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="simulacaoBody">
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="comparison" id="comparacao" style="display: none;">
+            <div class="comparison-item">
+                <h4>Vantagens do Modelo</h4>
+                <div style="background: linear-gradient(135deg, #d4edda, #c3e6cb); padding: 15px; border-radius: 10px; border: 1px solid #c3e6cb;">
+                    <h5>Pontos Positivos</h5>
+                    <ul id="vantagens">
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="comparison-item">
+                <h4>Pontos de Atenção</h4>
+                <div style="background: linear-gradient(135deg, #f8d7da, #f5c6cb); padding: 15px; border-radius: 10px; border: 1px solid #f5c6cb;">
+                    <h5>Aspectos a Considerar</h5>
+                    <ul id="atencoes">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
